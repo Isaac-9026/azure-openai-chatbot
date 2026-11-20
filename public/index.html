@@ -3,191 +3,301 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat - Historia del Perú</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #f4f5f7;
-      color: #1f2937;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 16px;
-    }
-    .chat-container {
-      width: 100%;
-      max-width: 720px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    header {
-      background: #991b1b;
-      color: #fff;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header h1 { font-size: 1.1rem; font-weight: 600; }
-    header span { font-size: 0.8rem; opacity: 0.85; display: block; }
-    #clear-btn {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
-    #clear-btn:hover { background: rgba(255, 255, 255, 0.25); }
-    #messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .msg {
-      max-width: 82%;
-      padding: 10px 14px;
-      border-radius: 12px;
-      line-height: 1.5;
-      font-size: 0.95rem;
-      white-space: pre-wrap;
-    }
-    .user {
-      align-self: flex-end;
-      background: #991b1b;
-      color: #fff;
-      border-bottom-right-radius: 4px;
-    }
-    .assistant {
-      align-self: flex-start;
-      background: #f3f4f6;
-      color: #1f2937;
-      border-bottom-left-radius: 4px;
-    }
-    form {
-      display: flex;
-      gap: 10px;
-      padding: 14px;
-      border-top: 1px solid #e5e7eb;
-      background: #fff;
-    }
-    input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      outline: none;
-    }
-    input:focus { border-color: #991b1b; }
-    button[type="submit"] {
-      background: #991b1b;
-      color: #fff;
-      border: none;
-      padding: 0 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-  </style>
+  <title>Historia del Perú — Asistente IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Markdown + Sanitización -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="chat-container">
+  <main class="chat-shell">
     <header>
-      <div>
-        <h1>Asistente de Historia del Perú</h1>
-        <span>Consultas exclusivas sobre historia peruana</span>
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-label="Sol Inti">
+            <!-- Rayos principales cardinales y diagonales -->
+            <path d="M12 1v2.5M12 20.5v2.5M1 12h2.5M20.5 12h2.5" />
+            <path d="m4.22 4.22 1.77 1.77M18.01 18.01l1.77 1.77M4.22 19.78l1.77-1.77M18.01 5.99l1.77-1.77" />
+            <!-- Rayos intermedios ceremoniales -->
+            <path d="M7 2.8 8.2 4.5M15.8 19.5l1.2 1.7M2.8 17l1.7-1.2M19.5 8.2l1.7-1.2M2.8 7l1.7 1.2M19.5 15.8l1.7 1.2M7 21.2l1.2-1.7M15.8 4.5l1.2-1.7" stroke-width="1.1" opacity="0.65" />
+            <!-- Disco solar central con relleno áureo -->
+            <circle cx="12" cy="12" r="5" fill="currentColor" fill-opacity="0.18" stroke-width="1.7" />
+            <!-- Rasgos ceremoniales andinos (Sol de Echenique) -->
+            <path d="M9.8 11h.01M14.2 11h.01" stroke-width="2.4" />
+            <path d="M12 11.5v2" />
+            <path d="M10.2 14.8c.8.5 2.8.5 3.6 0" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Historia del Perú <span class="badge">Solo contexto</span></h1>
+          <p>Culturas preíncas, Tahuantinsuyo, Virreinato y República</p>
+        </div>
       </div>
-      <button id="clear-btn" type="button">Limpiar</button>
+
+      <div class="header-actions">
+        <button id="theme-btn" class="btn-ghost icon-only" type="button" title="Cambiar tema" aria-label="Cambiar tema"></button>
+        <button id="clear-btn" class="btn-ghost" type="button" title="Nueva conversación">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+          </svg>
+          Nuevo chat
+        </button>
+      </div>
     </header>
 
-    <div id="messages">
-      <div class="msg assistant">Hola. Hazme cualquier pregunta sobre la Historia del Perú (culturas preíncas, Incas, Virreinato, Independencia o República).</div>
-    </div>
+    <section id="messages">
+      <div class="empty-state" id="empty-state">
+        <h2>¿Qué época del Perú quieres explorar?</h2>
+        <p>Respondo únicamente preguntas sobre la Historia del Perú. Selecciona una consulta rápida o escribe la tuya.</p>
+        <div class="suggestions">
+          <button class="suggestion-card" data-q="¿Cuál fue la importancia de la cultura Caral?">
+            <strong>Culturas Preíncas</strong>
+            <span>¿Cuál fue la importancia de la cultura Caral?</span>
+          </button>
+          <button class="suggestion-card" data-q="¿Cómo estaba organizado el Tahuantinsuyo?">
+            <strong>Imperio Inca</strong>
+            <span>¿Cómo estaba organizado el Tahuantinsuyo?</span>
+          </button>
+          <button class="suggestion-card" data-q="¿Qué causó la rebelión de Túpac Amaru II en 1780?">
+            <strong>Virreinato</strong>
+            <span>¿Qué causó la rebelión de Túpac Amaru II en 1780?</span>
+          </button>
+          <button class="suggestion-card" data-q="¿Cuándo y cómo se proclamó la Independencia del Perú?">
+            <strong>Independencia</strong>
+            <span>¿Cuándo y cómo se proclamó la Independencia?</span>
+          </button>
+        </div>
+      </div>
+    </section>
 
-    <form id="chat-form">
-      <input id="prompt" type="text" placeholder="Escribe tu pregunta sobre Historia del Perú..." autocomplete="off" required />
-      <button id="send-btn" type="submit">Enviar</button>
-    </form>
-  </div>
+    <div class="composer-wrap">
+      <form id="chat-form" class="composer">
+        <textarea
+          id="prompt"
+          rows="1"
+          placeholder="Pregunta sobre Historia del Perú... (Shift + Enter para salto de línea)"
+          required
+        ></textarea>
+        <button id="send-btn" class="btn-send" type="submit" aria-label="Enviar mensaje" title="Enviar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>
+          </svg>
+        </button>
+      </form>
+      <div class="footer-note">Asistente restringido exclusivamente a Historia del Perú</div>
+    </div>
+  </main>
 
   <script>
     const form = document.getElementById("chat-form");
-    const input = document.getElementById("prompt");
+    const textarea = document.getElementById("prompt");
     const sendBtn = document.getElementById("send-btn");
     const clearBtn = document.getElementById("clear-btn");
+    const themeBtn = document.getElementById("theme-btn");
     const messagesDiv = document.getElementById("messages");
+    const emptyStateHTML = document.getElementById("empty-state").outerHTML;
+
+    const ICONS = {
+      send: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>`,
+      stop: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>`,
+      sun: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
+      moon: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+      copy: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`,
+      check: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`
+    };
 
     let history = [];
+    let abortController = null;
 
-    function appendMessage(role, text = "") {
-      const div = document.createElement("div");
-      div.className = `msg ${role}`;
-      div.textContent = text;
-      messagesDiv.appendChild(div);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      return div;
+    // 1. Modo oscuro persistente
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("theme", theme);
+      themeBtn.innerHTML = theme === "dark" ? ICONS.sun : ICONS.moon;
     }
 
+    const savedTheme = localStorage.getItem("theme") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(savedTheme);
+
+    themeBtn.addEventListener("click", () => {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(next);
+    });
+
+    // 2. Textarea autoexpandible + Enter para enviar
+    function autoResize() {
+      textarea.style.height = "auto";
+      textarea.style.height = Math.min(textarea.scrollHeight, 140) + "px";
+    }
+    textarea.addEventListener("input", autoResize);
+    textarea.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        if (!abortController && textarea.value.trim()) form.requestSubmit();
+      }
+    });
+
+    // 3. Renderizado seguro de Markdown
+    function renderMarkdown(text) {
+      return DOMPurify.sanitize(marked.parse(text, { breaks: true }));
+    }
+
+    function bindSuggestions() {
+      document.querySelectorAll(".suggestion-card").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          textarea.value = btn.dataset.q;
+          autoResize();
+          form.requestSubmit();
+        });
+      });
+    }
+    bindSuggestions();
+
+    function appendMessage(role, content = "") {
+      const empty = document.getElementById("empty-state");
+      if (empty) empty.remove();
+
+      const row = document.createElement("div");
+      row.className = `msg-row ${role}`;
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = role === "user" ? "Tú" : "PE";
+
+      const contentWrap = document.createElement("div");
+      contentWrap.className = "msg-content";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+
+      if (content === "__loading__") {
+        bubble.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
+      } else {
+        bubble.textContent = content;
+      }
+
+      contentWrap.appendChild(bubble);
+
+      // Botón Copiar para respuestas de la IA
+      let copyBtn = null;
+      if (role === "assistant") {
+        const actions = document.createElement("div");
+        actions.className = "msg-actions";
+        copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "btn-copy";
+        copyBtn.innerHTML = `${ICONS.copy} Copiar`;
+        actions.appendChild(copyBtn);
+        contentWrap.appendChild(actions);
+      }
+
+      row.append(avatar, contentWrap);
+      messagesDiv.appendChild(row);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+      return { bubble, copyBtn };
+    }
+
+    function setStreamingUI(isStreaming) {
+      textarea.disabled = isStreaming;
+      if (isStreaming) {
+        sendBtn.type = "button";
+        sendBtn.classList.add("stop");
+        sendBtn.innerHTML = ICONS.stop;
+        sendBtn.title = "Detener generación";
+        sendBtn.setAttribute("aria-label", "Detener generación");
+      } else {
+        sendBtn.type = "submit";
+        sendBtn.classList.remove("stop");
+        sendBtn.innerHTML = ICONS.send;
+        sendBtn.title = "Enviar";
+        sendBtn.setAttribute("aria-label", "Enviar mensaje");
+        textarea.focus();
+      }
+    }
+
+    // Detener stream al hacer clic en Stop
+    sendBtn.addEventListener("click", () => {
+      if (abortController) {
+        abortController.abort();
+      }
+    });
+
     clearBtn.addEventListener("click", () => {
+      if (abortController) abortController.abort();
       history = [];
-      messagesDiv.innerHTML = "";
-      appendMessage("assistant", "Conversación reiniciada. ¿Qué deseas saber sobre la Historia del Perú?");
+      messagesDiv.innerHTML = emptyStateHTML;
+      bindSuggestions();
+      textarea.focus();
     });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const question = input.value.trim();
-      if (!question) return;
+      const question = textarea.value.trim();
+      if (!question || abortController) return;
 
-      input.value = "";
-      input.disabled = true;
-      sendBtn.disabled = true;
+      textarea.value = "";
+      autoResize();
 
       appendMessage("user", question);
       history.push({ role: "user", content: question });
 
-      const botDiv = appendMessage("assistant", "...");
+      const { bubble: botBubble, copyBtn } = appendMessage("assistant", "__loading__");
+
+      abortController = new AbortController();
+      setStreamingUI(true);
+
+      let fullText = "";
 
       try {
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ history }),
+          signal: abortController.signal,
         });
 
         if (!response.ok) throw new Error("Error del servidor");
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
-        let fullText = "";
-        botDiv.textContent = "";
 
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           fullText += decoder.decode(value, { stream: true });
-          botDiv.textContent = fullText;
+          botBubble.innerHTML = renderMarkdown(fullText);
           messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
-
-        history.push({ role: "assistant", content: fullText });
       } catch (err) {
-        botDiv.textContent = "Ocurrió un error al conectar con el servidor.";
+        if (err.name === "AbortError") {
+          fullText += fullText ? "\n\n*(Generación detenida)*" : "*(Generación detenida)*";
+          botBubble.innerHTML = renderMarkdown(fullText);
+        } else {
+          fullText = "Ocurrió un error al conectar con el servidor.";
+          botBubble.textContent = fullText;
+        }
       } finally {
-        input.disabled = false;
-        sendBtn.disabled = false;
-        input.focus();
+        if (fullText) {
+          history.push({ role: "assistant", content: fullText });
+          if (copyBtn) {
+            copyBtn.addEventListener("click", async () => {
+              await navigator.clipboard.writeText(fullText);
+              copyBtn.innerHTML = `${ICONS.check} Copiado`;
+              copyBtn.parentElement.classList.add("visible");
+              setTimeout(() => {
+                copyBtn.innerHTML = `${ICONS.copy} Copiar`;
+                copyBtn.parentElement.classList.remove("visible");
+              }, 1800);
+            });
+          }
+        }
+        abortController = null;
+        setStreamingUI(false);
       }
     });
   </script>
