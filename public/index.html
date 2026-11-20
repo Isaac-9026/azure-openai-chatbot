@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat - Historia del Perú</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f4f5f7;
+      color: #1f2937;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+    .chat-container {
+      width: 100%;
+      max-width: 720px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      background: #991b1b;
+      color: #fff;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { font-size: 1.1rem; font-weight: 600; }
+    header span { font-size: 0.8rem; opacity: 0.85; display: block; }
+    #clear-btn {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    #clear-btn:hover { background: rgba(255, 255, 255, 0.25); }
+    #messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .msg {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
+    .user {
+      align-self: flex-end;
+      background: #991b1b;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .assistant {
+      align-self: flex-start;
+      background: #f3f4f6;
+      color: #1f2937;
+      border-bottom-left-radius: 4px;
+    }
+    form {
+      display: flex;
+      gap: 10px;
+      padding: 14px;
+      border-top: 1px solid #e5e7eb;
+      background: #fff;
+    }
+    input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    input:focus { border-color: #991b1b; }
+    button[type="submit"] {
+      background: #991b1b;
+      color: #fff;
+      border: none;
+      padding: 0 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <header>
+      <div>
+        <h1>Asistente de Historia del Perú</h1>
+        <span>Consultas exclusivas sobre historia peruana</span>
+      </div>
+      <button id="clear-btn" type="button">Limpiar</button>
+    </header>
+
+    <div id="messages">
+      <div class="msg assistant">Hola. Hazme cualquier pregunta sobre la Historia del Perú (culturas preíncas, Incas, Virreinato, Independencia o República).</div>
+    </div>
+
+    <form id="chat-form">
+      <input id="prompt" type="text" placeholder="Escribe tu pregunta sobre Historia del Perú..." autocomplete="off" required />
+      <button id="send-btn" type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("prompt");
+    const sendBtn = document.getElementById("send-btn");
+    const clearBtn = document.getElementById("clear-btn");
+    const messagesDiv = document.getElementById("messages");
+
+    let history = [];
+
+    function appendMessage(role, text = "") {
+      const div = document.createElement("div");
+      div.className = `msg ${role}`;
+      div.textContent = text;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      return div;
+    }
+
+    clearBtn.addEventListener("click", () => {
+      history = [];
+      messagesDiv.innerHTML = "";
+      appendMessage("assistant", "Conversación reiniciada. ¿Qué deseas saber sobre la Historia del Perú?");
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const question = input.value.trim();
+      if (!question) return;
+
+      input.value = "";
+      input.disabled = true;
+      sendBtn.disabled = true;
+
+      appendMessage("user", question);
+      history.push({ role: "user", content: question });
+
+      const botDiv = appendMessage("assistant", "...");
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ history }),
+        });
+
+        if (!response.ok) throw new Error("Error del servidor");
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let fullText = "";
+        botDiv.textContent = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          fullText += decoder.decode(value, { stream: true });
+          botDiv.textContent = fullText;
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        history.push({ role: "assistant", content: fullText });
+      } catch (err) {
+        botDiv.textContent = "Ocurrió un error al conectar con el servidor.";
+      } finally {
+        input.disabled = false;
+        sendBtn.disabled = false;
+        input.focus();
+      }
+    });
+  </script>
+</body>
+</html>
