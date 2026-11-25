@@ -64,6 +64,8 @@ Proyecto interactivo desarrollado con **Node.js**, **Express** y **Azure OpenAI*
 
 ## Ejecución
 
+Para consultar el paso a paso de cómo se usa cada asistente y ver ejemplos prácticos, dirígete a [README_USO.md](README_USO.md).
+
 ### 1. Iniciar el Chatbot Web (Historia del Perú)
 ```bash
 npm start
