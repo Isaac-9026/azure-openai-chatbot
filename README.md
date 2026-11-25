@@ -1,6 +1,6 @@
 # Chatbot Inteligente con Azure OpenAI
 
-Proyecto interactivo desarrollado con **Node.js**, **Express** y **Azure OpenAI**, que incluye un asistente web especializado en la **Historia del Perú** y un chatbot por consola para **consulta y gestión de deudas** con ejecución de funciones locales.
+Proyecto interactivo desarrollado con **Node.js**, **Express** y **Azure OpenAI**, que incluye un asistente web especializado en la **Historia del Perú**, un chatbot por consola para **consulta y gestión de deudas** y un **asistente resumidor de documentos** con exportación a Markdown.
 
 ---
 
@@ -14,6 +14,11 @@ Proyecto interactivo desarrollado con **Node.js**, **Express** y **Azure OpenAI*
 2. **Chatbot de Consola - Consulta de Deudas (`chatbot-deudas.js`):**
    - Ejecución interactiva en terminal mediante `readline`.
    - Soporte de Function Calling (llamadas a herramientas locales) para validar DNI, consultar saldos y registrar pagos de clientes en una base de datos simulada.
+
+3. **Asistente Resumidor de Documentos (`resumidor.js`):**
+   - Lee archivos locales (`.txt` o `.md`) o textos pegados directamente en consola.
+   - Genera resúmenes en estilos **Ejecutivo**, **Puntos Clave** o **Académico**.
+   - Exporta automáticamente cada resumen en formato Markdown dentro de la carpeta `resumenes/` y mantiene un historial de sesión.
 
 ---
 
@@ -73,19 +78,38 @@ http://localhost:3000
 node chatbot-deudas.js
 ```
 
+### 3. Iniciar el Asistente Resumidor de Documentos
+```bash
+npm run resumidor
+```
+*(También puedes ejecutar `node resumidor.js`).*
+
+En la consola puedes:
+- Pegar un texto directamente para resumirlo.
+- Indicar la ruta de un archivo `.txt` o `.md`, por ejemplo: `Resume Textos/Texto1.md en estilo Académico`.
+- Escribir `demo` para probar con un acta de reunión de ejemplo.
+- Pedir el historial de resúmenes generados o escribir `salir` para terminar.
+
+Los archivos Markdown generados se guardan en la carpeta `resumenes/`.
+
 ---
 
 ## Estructura del Proyecto
 
 ```text
 ├── public/
-│   └── index.html         # Interfaz web del Chatbot de Historia
+│   ├── index.html         # Interfaz web del Chatbot de Historia
+│   └── styles.css         # Estilos de la interfaz web
+├── Textos/
+│   ├── Texto1.md          # Texto de ejemplo para el resumidor
+│   └── historia.md        # Texto de ejemplo sobre historia
 ├── .env.example           # Plantilla de variables de entorno
 ├── .gitignore             # Archivos y carpetas excluidas de Git
 ├── chatbot-deudas.js      # Chatbot de consola con Function Calling
 ├── package.json           # Dependencias y scripts del proyecto
 ├── package-lock.json      # Bloqueo de versiones de dependencias
 ├── README.md              # Documentación del proyecto
+├── resumidor.js           # Asistente resumidor de textos y archivos (.md)
 └── server.js              # Servidor Express y endpoint de la API
 ```
 

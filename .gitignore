@@ -16,3 +16,7 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Salidas generadas por el resumidor
+resumen_*.md
+resumenes/
